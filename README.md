@@ -1,4 +1,4 @@
-# SRL-Aware SEPF Analysis with Gated Fusion
+# SRL-Aware SEPF Detection with Gated Fusion
 
 This repository contains code for **SRL-aware Sentiment, Emotion, Politeness, and Formality (SEPF) analysis**, where **Semantic Role Labeling (SRL) features are integrated into the model via a gated fusion mechanism**.
 
