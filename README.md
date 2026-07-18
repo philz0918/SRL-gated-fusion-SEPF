@@ -38,6 +38,14 @@ Every task is trained in six configurations to isolate the effect of SRL informa
 
 (For politeness and formality, the SRL models are *directional* — e.g., ARG0 → ARG1 — and the no-fusion counterpart is a last-layer concatenation variant.)
 
+## Datasets
+
+| Task | Dataset | Reference |
+|---|---|---|
+| Sentiment & Emotion | GoEmotions | [Demszky et al., ACL 2020](https://aclanthology.org/2020.acl-main.372/) |
+| Politeness | Holistic Politeness dataset | [Priya et al., EMNLP 2023](https://aclanthology.org/2023.emnlp-main.419/) |
+| Formality | GYAFC (access must be requested from the authors) | [Rao & Tetreault, NAACL 2018](https://aclanthology.org/N18-1012/) |
+
 ## Usage
 
 1. Open the training notebook for the task you want.
