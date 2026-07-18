@@ -1,40 +1,70 @@
-# SRL-Aware SEPF Detection with Gated Fusion
+# SRL-Gated-Fusion-SEPF
 
-This repository contains code for **SRL-aware Sentiment, Emotion, Politeness, and Formality (SEPF) analysis**, where **Semantic Role Labeling (SRL) features are integrated into the model via a gated fusion mechanism**.
+Training code for **SRL-aware BERT models** that detect four communication signals from a single sentence: **S**entiment, **E**motion, **P**oliteness, and **F**ormality (SEPF). The models inject Semantic Role Labeling (SRL) information into BERT through role-attention and gated-fusion mechanisms, and are compared against vanilla BERT baselines.
 
-## Overview
+> **This repository contains training and evaluation code only.**
+> The trained model checkpoints and ready-to-run single-sentence inference plugins are hosted on Hugging Face: **https://huggingface.co/yeomtong**
 
-The goal of this project is to improve language understanding by incorporating predicate–argument structure and semantic roles into downstream classification tasks. Rather than simply concatenating SRL features with text representations, this project uses **gated fusion**: a learned gate dynamically controls how much SRL-derived semantic information is blended with the contextual text encoding for each input, allowing the model to rely on semantic role structure when it is informative and fall back on the raw text representation when it is not.
+## Repository structure
 
-This repository covers four tasks:
+```
+srl-aware-emotion-detection/
+    Emotion_Model_Training.ipynb        # train & test emotion models (28 GoEmotions labels)
+    dataset/
+srl-aware-sentiment-detection/
+    Sentiment_Model_Training.ipynb      # train & test sentiment models
+    dataset/
+srl-aware-politeness-detection/
+    Create_Politeness_Datasets.ipynb    # build SRL-aligned politeness datasets
+    Politeness_Model_Training.ipynb     # train & test politeness models
+    dataset/
+srl-aware-formality-detection/
+    Create_Formality_Datasets.ipynb     # build SRL-aligned formality datasets
+    Formality_Model_Training.ipynb      # train & test formality models
+```
 
-- **Sentiment detection**
-- **Emotion detection**
-- **Politeness detection**
-- **Formality detection**
+Each training notebook follows the same layout: data loading → SRL dataset & collate functions → model definitions → training loops for every variant → test evaluation.
 
-## Method: Gated Fusion of SRL Features
+## Model variants
 
-1. **Text encoding** — input text is encoded with a pretrained language model to obtain contextual representations.
-2. **SRL feature extraction** — predicate–argument structures and semantic roles are extracted from the same input via Semantic Role Labeling.
-3. **Gated fusion** — a gating layer computes element-wise weights that adaptively combine the text representation and the SRL representation:
+Every task is trained in six configurations to isolate the effect of SRL information and the fusion strategy:
 
-   `fused = g ⊙ h_text + (1 − g) ⊙ h_srl`,  where `g = σ(W[h_text ; h_srl])`
+| Variant | Description |
+|---|---|
+| Vanilla BERT (no MLP) | BERT baseline with a linear classification head |
+| Vanilla BERT (MLP) | BERT baseline with an MLP classification head |
+| SRL, no fusion (no MLP / MLP) | SRL role-attention features, concatenation only |
+| SRL, gated fusion (no MLP / MLP) | SRL role-attention features combined via a learned gated fusion |
 
-4. **Task-specific classification** — the fused representation feeds into a classifier head for each of the SEPF tasks.
+(For politeness and formality, the SRL models are *directional* — e.g., ARG0 → ARG1 — and the no-fusion counterpart is a last-layer concatenation variant.)
 
-## Repository Contents
+## Usage
 
-- `srl_aware_sentiment/` — SRL-aware sentiment detection with gated fusion
-- `srl_aware_emotion/` — SRL-aware emotion detection with gated fusion
-- `srl_aware_politeness/` — SRL-aware politeness detection with gated fusion
-- `srl_aware_formality/` — SRL-aware formality detection with gated fusion
-- `README.md` — project description
+1. Open the training notebook for the task you want.
+2. Replace every path marked `/Enter-your-path/` with the location of your data and model-log directories.
+3. For politeness and formality, run the corresponding `Create_*_Datasets.ipynb` first to produce the SRL-aligned dataset files.
+4. Run the notebook top to bottom. Each variant has its own training section; the final Test Evaluation section reports per-label precision/recall/F1.
 
-## Features
+The underlying SRL predictor (predicate-aware SRL BERT) is downloaded automatically from the Hugging Face Hub inside the notebooks.
 
-- Text preprocessing pipeline
-- SRL-based feature extraction
-- **Gated fusion module** for adaptively combining SRL and contextual text features
-- Task-specific analysis for sentiment, emotion, politeness, and formality
-- Example scripts for running the models
+### Requirements
+
+```
+torch
+transformers
+huggingface_hub
+scikit-learn
+scipy
+pandas
+numpy
+tqdm
+spacy            # politeness / formality only
+```
+
+For politeness and formality, also install the spaCy model: `python -m spacy download en_core_web_md`
+
+## Trained models & single-sentence inference
+
+If you just want predictions (with optional LLM-generated explanations) rather than training from scratch, use the plugins on Hugging Face — each includes the trained checkpoint and a self-contained script/notebook that takes a raw sentence and returns the prediction:
+
+**https://huggingface.co/yeomtong**
