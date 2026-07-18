@@ -1,5 +1,0 @@
-openai
-spacy
-torch
-transformers
-huggingface_hub
