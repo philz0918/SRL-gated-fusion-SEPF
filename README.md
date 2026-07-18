@@ -3,7 +3,7 @@
 Training code for **SRL-aware BERT models** that detect four communication signals from a single sentence: **S**entiment, **E**motion, **P**oliteness, and **F**ormality (SEPF). The models inject Semantic Role Labeling (SRL) information into BERT through role-attention and gated-fusion mechanisms, and are compared against vanilla BERT baselines.
 
 > **This repository contains training and evaluation code only.**
-> The trained model checkpoints and ready-to-run single-sentence inference plugins are hosted on Hugging Face: **https://huggingface.co/yeomtong**
+> The trained model checkpoints and ready-to-run single-sentence inference plugins are hosted on Hugging Face: **https://huggingface.co/yeomtong/SRL-aware-SEPF**
 
 ## Repository structure
 
@@ -75,4 +75,4 @@ For politeness and formality, also install the spaCy model: `python -m spacy dow
 
 If you just want predictions (with optional LLM-generated explanations) rather than training from scratch, use the plugins on Hugging Face — each includes the trained checkpoint and a self-contained script/notebook that takes a raw sentence and returns the prediction:
 
-**https://huggingface.co/yeomtong**
+**https://huggingface.co/yeomtong/SRL-aware-SEPF**
